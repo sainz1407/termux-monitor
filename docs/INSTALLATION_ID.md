@@ -19,7 +19,7 @@ Dokumen ini berisi panduan langkah demi langkah untuk menginstal dan menjalankan
 
 ### Metode 1: Instalasi via Zip Modul (Direkomendasikan)
 
-1. Unduh rilis file zip modul terbaru `Termux-Monitor-Magisk-vX.Y.Z.zip` dari halaman [Releases](https://github.com/sainz1407/termux-web/releases).
+1. Unduh rilis file zip modul terbaru `Termux-Monitor-Magisk-vX.Y.Z.zip` dari halaman [Releases](https://github.com/sainz1407/termux-monitor/releases).
 2. Buka aplikasi Root Manager Anda (**Magisk App**, **KernelSU App**, atau **APatch App**).
 3. Masuk ke menu **Modules** / **Modul**.
 4. Pilih **Install from storage** / **Pasang dari penyimpanan** dan pilih file zip yang telah diunduh.

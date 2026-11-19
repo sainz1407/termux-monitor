@@ -113,7 +113,7 @@ All color themes drive standard CSS custom property variables defined in `base.c
 - **Header Bar (`header`)**: Sticky top bar (`sticky top-0 z-[1000]`), translucent background with backdrop blur (`bg-card/80 backdrop-blur`), max-width 7xl container (`max-w-7xl mx-auto`).
 - **Brand Block**:
   - Logo Box: `w-9 h-9 rounded-xl bg-blue-600` containing letter `T`.
-  - Title: `Termux Monitor` + **PRO Badge** (`bg-[#f59e0b] text-[#000000] border-[1.5px] border-black text-[10px] font-black uppercase tracking-wider`).
+  - Title: `Termux Monitor` (uppercase, `font-mono font-black`, `tracking-wider`).
 - **Category Navigation (`nav`)**:
   Pill wrapper (`bg-black/90 p-1.5 rounded-xl border border-border/80 shadow-lg`) containing 4 primary category triggers (`NAV_CATEGORIES` in `stores/navigation.svelte.ts`):
   1. **Core**: Overview, Sysinfo, Processes, Kernel, About.

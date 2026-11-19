@@ -19,7 +19,7 @@ This document provides a step-by-step guide to installing and running **Termux M
 
 ### Method 1: Installing via Modul Zip (Recommended)
 
-1. Download the latest module zip release package `Termux-Monitor-Magisk-vX.Y.Z.zip` from the [Releases](https://github.com/sainz1407/termux-web/releases) page.
+1. Download the latest module zip release package `Termux-Monitor-Magisk-vX.Y.Z.zip` from the [Releases](https://github.com/sainz1407/termux-monitor/releases) page.
 2. Open your Root Manager application (**Magisk App**, **KernelSU App**, or **APatch App**).
 3. Go to the **Modules** / **Modul** section.
 4. Select **Install from storage** and choose the downloaded zip file.

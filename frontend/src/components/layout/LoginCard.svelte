@@ -183,7 +183,7 @@
         <div class="grid grid-cols-2 gap-2">
           <!-- GitHub Button -->
           <a
-            href="https://github.com/sainz1407/termux-web"
+            href="https://github.com/sainz1407/termux-monitor"
             target="_blank"
             rel="noopener noreferrer"
             class="p-2.5 rounded-xl bg-card-sub border border-border/70 text-muted hover:text-foreground hover:border-accent/40 hover:bg-accent/10 transition flex items-center justify-center gap-1.5 text-xs font-bold select-none cursor-pointer group"
@@ -196,7 +196,7 @@
 
           <!-- Issues Button -->
           <a
-            href="https://github.com/sainz1407/termux-web/issues"
+            href="https://github.com/sainz1407/termux-monitor/issues"
             target="_blank"
             rel="noopener noreferrer"
             class="p-2.5 rounded-xl bg-card-sub border border-border/70 text-muted hover:text-foreground hover:border-sky-500/40 hover:bg-sky-500/10 transition flex items-center justify-center gap-1.5 text-xs font-bold select-none cursor-pointer group"

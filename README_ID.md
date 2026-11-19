@@ -97,8 +97,8 @@ Seluruh produk berjalan sebagai satu proses. Semua tab berkomunikasi dengan daem
 
 ```sh
 pkg install golang
-git clone https://github.com/sainz1407/termux-web.git
-cd termux-web
+git clone https://github.com/sainz1407/termux-monitor.git
+cd termux-monitor
 go build -ldflags "-s -w" -o webui .
 sudo ./webui --port 8080
 ```
@@ -340,7 +340,7 @@ Operasi berdurasi panjang (instalasi paket, operasi cron) mengembalikan handle d
 
 ## Kredit dan Lisensi
 
-Dikembangkan dan dipelihara oleh `sainz1407`. Repositori: <https://github.com/sainz1407/termux-web>.
+Dikembangkan dan dipelihara oleh `sainz1407`. Repositori: <https://github.com/sainz1407/termux-monitor>.
 
 Komponen pihak ketiga: `gorilla/websocket`, `creack/pty`, `ncruces/go-sqlite3` (SQLite WASM), `golang.org/x/crypto`, `golang.org/x/net`, Svelte, Vite dan Tailwind CSS.
 

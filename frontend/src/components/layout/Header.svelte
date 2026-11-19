@@ -79,9 +79,6 @@
           <span class="font-mono font-black text-sm tracking-wider uppercase text-foreground">
             Termux Monitor
           </span>
-          <span class="hidden sm:inline-block ml-1 text-[10px] font-mono text-accent font-bold px-1.5 py-0.2 bg-card-sub rounded border border-border">
-            GO
-          </span>
         </div>
       </div>
     </div>

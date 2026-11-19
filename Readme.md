@@ -97,8 +97,8 @@ The whole product is one process. Every tab talks to the local daemon over the s
 
 ```sh
 pkg install golang
-git clone https://github.com/sainz1407/termux-web.git
-cd termux-web
+git clone https://github.com/sainz1407/termux-monitor.git
+cd termux-monitor
 go build -ldflags "-s -w" -o webui .
 sudo ./webui --port 8080
 ```
@@ -340,7 +340,7 @@ Long running operations (package install, cron operations) return a handle and s
 
 ## Credits and License
 
-Built and maintained by `sainz1407`. Repository: <https://github.com/sainz1407/termux-web>.
+Built and maintained by `sainz1407`. Repository: <https://github.com/sainz1407/termux-monitor>.
 
 Third-party components: `gorilla/websocket`, `creack/pty`, `ncruces/go-sqlite3` (WASM SQLite), `golang.org/x/crypto`, `golang.org/x/net`, Svelte, Vite and Tailwind CSS.
 

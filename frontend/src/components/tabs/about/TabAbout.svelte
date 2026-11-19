@@ -16,7 +16,7 @@
   import Badge from '../../ui/Badge.svelte'
   import { APP_BUILD, APP_VERSION } from '../../../config/version'
 
-  const REPO_URL = 'https://github.com/sainz1407/termux-web'
+  const REPO_URL = 'https://github.com/sainz1407/termux-monitor'
 </script>
 
 <div class="space-y-3 sm:space-y-6">
