@@ -56,8 +56,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Frontend Branding**: Header and sidebar display "Termux Monitor" with a `T` monogram, and the embedded HTML `<title>` was updated accordingly.
 - **Overview Quick Actions**: The shortcut row below the Application Shortcuts card now offers **NAS** instead of the Tethering entry, and a new **Website** button was added next to Power, so the row holds Network & Traffic, NAS, Power Actions and Website.
 - **Clash Core in Root Daemon Services**: The `Clash Core` entry was dropped from the Sysinfo daemon list, which now reports only the SSH Daemon, ADB Wireless and the Web UI Server.
-- **Repository Rename**: The GitHub repository moved to `https://github.com/sainz1407/termux-monitor`, and every reference was updated — the clone instructions, the About and Login links, `module.prop` (`github` and `updateJson`) and `update.json` (`zipUrl` and `changelog`).
-- **Header Badge Removed**: The `GO` pill next to the "Termux Monitor" title in the header was removed, so the branding is just the monogram and the product name.
 
 ### Fixed
 - **Build Artifacts Hygiene**: `.gitignore` now excludes the new `termux-monitor-*` / `termux-webui-*` standalone build outputs.

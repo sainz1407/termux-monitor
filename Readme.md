@@ -6,7 +6,10 @@ An ultra-lightweight, fully offline Android control panel that runs as a Magisk 
 - Module id: `termux_monitor`
 - Default address: `http://<phone-ip>:80` and `https://<phone-ip>:443`
 - License: GPL-3.0
+---
+![screenshot](Screenshot_1.png)
 
+![screenshot](Screenshot_2.png)
 ---
 
 ## Table of Contents
