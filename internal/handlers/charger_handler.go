@@ -1,0 +1,62 @@
+package handlers
+
+import (
+	"encoding/json"
+	"net/http"
+
+	"termux-monitor/internal/charger"
+	"termux-monitor/internal/logger"
+)
+
+func HandleChargerConfig(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	status := charger.GetStatus()
+	w.Header().Set("Content-Type", "application/json")
+	_ = json.NewEncoder(w).Encode(status)
+}
+
+func HandleChargerToggle(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	action := r.URL.Query().Get("action")
+	if action == "manual" || action == "toggle" {
+		status := charger.ToggleCharging()
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(status)
+		return
+	}
+	var cfg charger.Config
+	if err := json.NewDecoder(r.Body).Decode(&cfg); err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(map[string]string{"error": "Invalid request payload"})
+		return
+	}
+
+	status := charger.UpdateConfig(cfg)
+	logger.Get().Infof("Charger", "Charger control config updated: enabled=%v, start=%d%%, stop=%d%%", cfg.Enabled, cfg.StartPercent, cfg.StopPercent)
+	w.Header().Set("Content-Type", "application/json")
+	_ = json.NewEncoder(w).Encode(status)
+}
+
+func HandleChargerProbe(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	profileID := r.URL.Query().Get("profile_id")
+	if profileID != "" {
+		res := charger.ProbeSingleSwitch(profileID)
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(res)
+		return
+	}
+	results := charger.ProbeSwitches()
+	w.Header().Set("Content-Type", "application/json")
+	_ = json.NewEncoder(w).Encode(results)
+}

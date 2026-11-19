@@ -1,0 +1,165 @@
+name: Release and Artifact Builder
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build:
+    name: Build & Validate Target
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get Release Version
+        run: |
+          VERSION=$(grep "^version=" module.prop | cut -d'=' -f2)
+          echo "RELEASE_VERSION=${VERSION}" >> $GITHUB_ENV
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Setup Go Environment
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.0'
+          cache: false
+
+      - name: Install Frontend Dependencies
+        working-directory: frontend
+        run: bun install --frozen-lockfile
+
+      # ─── 1. Build Full Frontend Assets First (Pre-requisite for embed.go) ──
+      - name: Build Full Frontend Distribution
+        working-directory: frontend
+        run: bun run build
+
+      - name: Verify Full Frontend Build Output
+        run: |
+          if [ ! -d "frontend/dist" ] || [ ! -f "frontend/dist/index.html" ]; then
+            echo "Error: frontend/dist or index.html missing!" >&2
+            exit 1
+          fi
+          ls -la frontend/dist/
+
+      - name: Check Formatting & Golang Vet
+        run: |
+          go fmt ./...
+          go vet ./...
+
+      - name: Run Full & No-Modem Test Suites
+        run: |
+          go test -v ./...
+          go test -v -tags nomodem ./...
+
+      # ─── 2. Cross-Compile Full Flavor (Private Target) ──────────────────────
+      - name: Cross-Compile Full Android ARM64 Binary
+        env:
+          GOOS: android
+          GOARCH: arm64
+          CGO_ENABLED: 0
+        run: |
+          go build -ldflags="-s -w" -o webui .
+
+      - name: Package Full Magisk Module Zip
+        run: |
+          zip -r Termux-Monitor-Magisk-${{ env.RELEASE_VERSION }}.zip META-INF customize.sh module.prop service.sh system.prop update.json env.example uninstall.sh bin webui
+
+      # ─── 3. Build Core No-Modem Flavor (Clean Target) ───────────────────────
+      # The vendor modem seam has been retired: the full and no-modem flavors now
+      # build from identical frontend assets, so only the Go build tag differs.
+      - name: Verify Frontend Output for No-Modem Build
+        run: |
+          if [ ! -d "frontend/dist" ] || [ ! -f "frontend/dist/index.html" ]; then
+            echo "Error: frontend/dist or index.html missing for nomodem build!" >&2
+            exit 1
+          fi
+          ls -la frontend/dist/
+
+      - name: Cross-Compile Clean No-Modem Android ARM64 Binary
+        env:
+          GOOS: android
+          GOARCH: arm64
+          CGO_ENABLED: 0
+        run: |
+          go build -tags nomodem -ldflags="-s -w" -o webui-nomodem .
+
+      - name: Forensic Zero-Leak Security Audit on No-Modem Binary
+        run: |
+          python3 scripts/audit_nomodem.py webui-nomodem
+
+      - name: Package Clean No-Modem Magisk Module Zip
+        run: |
+          mkdir -p /tmp/pkg-nomodem
+          cp -r META-INF customize.sh module.prop service.sh system.prop update.json env.example uninstall.sh bin /tmp/pkg-nomodem/
+          cp webui-nomodem /tmp/pkg-nomodem/webui
+          (cd /tmp/pkg-nomodem && zip -r "$GITHUB_WORKSPACE/Termux-Monitor-Magisk-${{ env.RELEASE_VERSION }}-nomodem.zip" META-INF customize.sh module.prop service.sh system.prop update.json env.example uninstall.sh bin webui)
+
+      # ─── 4. Upload Build Artifacts ──────────────────────────────────────────
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Termux-Monitor-Magisk-${{ env.RELEASE_VERSION }}
+          path: |
+            Termux-Monitor-Magisk-${{ env.RELEASE_VERSION }}.zip
+            Termux-Monitor-Magisk-${{ env.RELEASE_VERSION }}-nomodem.zip
+            webui
+            webui-nomodem
+          retention-days: 7
+
+  release:
+    name: Publish Github Release
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Get Release Version
+        run: |
+          VERSION=$(grep "^version=" module.prop | cut -d'=' -f2)
+          echo "RELEASE_VERSION=${VERSION}" >> $GITHUB_ENV
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: Termux-Monitor-Magisk-${{ env.RELEASE_VERSION }}
+
+      - name: Extract Release Notes from CHANGELOG
+        id: changelog
+        run: |
+          TAG_VER="${{ env.RELEASE_VERSION }}"
+          RAW_VER="${TAG_VER#v}"
+
+          echo "Extracting release notes for version: $RAW_VER"
+
+          awk "/## \[$RAW_VER\]/{p=1;next} /^## \[/{p=0} p" CHANGELOG.md > release_notes.md
+
+          if [ ! -s release_notes.md ]; then
+            echo "Warning: Version section not found or empty in CHANGELOG.md. Using fallback notes."
+            echo "Release of Termux Monitor version $TAG_VER" > release_notes.md
+          fi
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.RELEASE_VERSION }}
+          name: Termux Monitor ${{ env.RELEASE_VERSION }}
+          body_path: release_notes.md
+          files: |
+            Termux-Monitor-Magisk-${{ env.RELEASE_VERSION }}.zip
+            Termux-Monitor-Magisk-${{ env.RELEASE_VERSION }}-nomodem.zip
+            webui
+            webui-nomodem
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

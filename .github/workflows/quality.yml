@@ -1,0 +1,81 @@
+name: Code Quality & Linting
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+
+jobs:
+  frontend:
+    name: Frontend Check & Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+      - name: Install Frontend Dependencies
+        working-directory: frontend
+        run: bun install --frozen-lockfile
+
+      - name: Type & Svelte Check
+        working-directory: frontend
+        run: bun run check
+
+      - name: Build Frontend Distribution
+        working-directory: frontend
+        run: bun run build
+
+  test:
+    name: Run Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+      - name: Build Frontend Assets
+        working-directory: frontend
+        run: |
+          bun install --frozen-lockfile
+          bun run build
+
+      - name: Setup Go Environment
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.0'
+          cache: false
+
+      - name: Run All Package Tests (Full & No-Modem)
+        run: |
+          go test -v ./...
+          go test -v -tags nomodem ./...
+  golangci:
+    name: Lint & Static Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+      - name: Build Frontend Assets
+        working-directory: frontend
+        run: |
+          bun install --frozen-lockfile
+          bun run build
+
+      - name: Setup Go Environment
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.0'
+          cache: false
+      - name: GolangCI-Lint Static Verification
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.64
+          install-mode: goinstall
+          args: --timeout=5m

@@ -1,0 +1,174 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Termux Monitor API",
+    "description": "Ultra-lightweight Android System Control Panel & WebUI REST API",
+    "version": "1.1.0"
+  },
+  "paths": {
+    "/api/auth/status": {
+      "get": {
+        "summary": "Get authentication status",
+        "responses": {
+          "200": { "description": "Auth status response" }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "summary": "Authenticate session",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "password": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Login successful" },
+          "401": { "description": "Invalid password" }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "summary": "Invalidate current session",
+        "responses": {
+          "200": { "description": "Logged out" }
+        }
+      }
+    },
+    "/api/stats": {
+      "get": {
+        "summary": "Get real-time system stats (CPU, RAM, thermals, disks, battery)",
+        "responses": {
+          "200": { "description": "System statistics object" }
+        }
+      }
+    },
+    "/api/power": {
+      "post": {
+        "summary": "Execute system power action",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "action": { "type": "string", "enum": ["reboot", "shutdown", "soft_reboot", "recovery", "bootloader"] }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Power action initiated" },
+          "400": { "description": "Invalid action" }
+        }
+      }
+    },
+    "/api/network/dns": {
+      "get": {
+        "summary": "Get preset DNS list",
+        "responses": { "200": { "description": "DNS preset list" } }
+      },
+      "post": {
+        "summary": "Set primary and secondary DNS",
+        "responses": { "200": { "description": "DNS updated" } }
+      }
+    },
+    "/api/files/list": {
+      "get": {
+        "summary": "List files in directory",
+        "parameters": [
+          { "name": "path", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "File list" } }
+      }
+    },
+    "/api/files/storage": {
+      "get": {
+        "summary": "Get storage partition usage",
+        "responses": { "200": { "description": "Storage statistics" } }
+      }
+    },
+    "/api/hotspot/status": {
+      "get": {
+        "summary": "Get SoftAP hotspot status",
+        "responses": { "200": { "description": "Hotspot status" } }
+      }
+    },
+    "/api/ssh/status": {
+      "get": {
+        "summary": "Get SSH daemon status",
+        "responses": { "200": { "description": "SSH status" } }
+      }
+    },
+    "/api/charger/config": {
+      "get": {
+        "summary": "Get Smart Charger control status",
+        "responses": { "200": { "description": "Charger status" } }
+      }
+    },
+    "/api/sms/inbox": {
+      "get": {
+        "summary": "Read SMS inbox messages",
+        "responses": { "200": { "description": "SMS inbox response" } }
+      }
+    },
+    "/api/logs": {
+      "get": {
+        "summary": "Get application security & system audit log entries",
+        "responses": { "200": { "description": "Log entries" } }
+      }
+    },
+    "/api/processes": {
+      "get": {
+        "summary": "List the running processes with CPU, memory, owner and runtime detection",
+        "parameters": [
+          { "name": "q", "in": "query", "schema": { "type": "string" } },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["cpu", "mem", "pid", "name", "elapsed"]
+            }
+          },
+          { "name": "limit", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": { "200": { "description": "Process list" } }
+      }
+    },
+    "/api/processes/kill": {
+      "post": {
+        "summary": "Stop a running process",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "pid": { "type": "integer" },
+                  "force": { "type": "boolean" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Termination result" },
+          "400": { "description": "Invalid process id" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,8 @@
+id=termux_monitor
+name=Termux Monitor
+version=v1.3.0
+versionCode=130
+author=sainz1407
+github=https://github.com/sainz1407/termux-web
+description=Termux System Status WebUI &amp; Control Panel built in Go &amp; Svelte 5.
+updateJson=https://raw.githubusercontent.com/sainz1407/termux-web/main/update.json
